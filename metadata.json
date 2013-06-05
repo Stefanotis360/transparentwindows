@@ -1,0 +1,7 @@
+{
+"shell-version": ["3.8.2"],
+"settings-schema": "org.gnome.shell.extensions.transparentwindows", 
+"uuid": "transparentwindows@ellen",
+"name": "Transparent Windows", 
+"description": "Makes all windows equally transparent by setting the opacity."
+}
