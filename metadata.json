@@ -6,5 +6,5 @@
 "settings-schema": "org.gnome.shell.extensions.transparentwindows", 
 "uuid": "transparentwindows@ellen",
 "name": "Transparent Windows", 
-"description": "Makes all windows equally transparent by setting the opacity."
+"description": "Makes all windows transparent."
 }
