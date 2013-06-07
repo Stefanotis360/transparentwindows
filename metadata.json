@@ -1,5 +1,8 @@
 {
-"shell-version": ["3.8.2"],
+"shell-version": [
+  "3.8.2",
+  "3.9.2"
+],
 "settings-schema": "org.gnome.shell.extensions.transparentwindows", 
 "uuid": "transparentwindows@ellen",
 "name": "Transparent Windows", 
