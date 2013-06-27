@@ -118,16 +118,15 @@ const Indicator = new Lang.Class({
     },
     
     _onToggled_clear_active: function(){
-  		this._clearActiveToggle.setToggleState(0);
-  		let pid = getActivePid()
-  		delete OpacityHashMap[pid];
+  		delete OpacityHashMap[getActivePid()];
   		updateOpacity();
+  		this._clearActiveToggle.setToggleState(0);
     },
     
     _onValueChanged: function() {
         oppa = Math.floor((this._tsValueSlider.value * 205) + 50);
         this._settings.set_int('opacity', oppa);
-        _updateLabel();
+        this._updateLabel();
     },
     
     _onValueChanged_active: function() {
@@ -147,14 +146,16 @@ const Indicator = new Lang.Class({
     },
 
 });
+
 function getActivePid() {
+	var somepid = false;
 	global.get_window_actors().forEach(function(wa) {
            var meta_win = wa.get_meta_window();
            if (meta_win.has_focus()) {
-				return meta_win.get_pid();
+           		somepid = meta_win.get_pid();
            }
     });
-    return false;
+    return somepid;
 }
 
 function setCustomOpacity(opacity) {
@@ -167,8 +168,8 @@ function setCustomOpacity(opacity) {
         });
 }
 
-function hasCustomOpacity(pid) {
-	if (pid in OpacityHashMap) {
+function hasCustomOpacity(pid_id) {
+	if (pid_id in OpacityHashMap) {
 		return true;
 	} else {
 		return false;
@@ -210,9 +211,9 @@ function mydisconnect() {
     settings.set_int('mystate', 0);
 }
 function updateOpacity() {
-    let mystate = settings.get_int('mystate');
+  	var mystate = settings.get_int('mystate');
     if (mystate == 1) {
-        let opacity_transparent = settings.get_int('opacity');
+      	var opacity_transparent = settings.get_int('opacity');
         global.get_window_actors().forEach(function(wa) {
             var meta_win = wa.get_meta_window();
             if (!meta_win) {
@@ -220,7 +221,7 @@ function updateOpacity() {
             }
             var wksp = meta_win.get_workspace();
             if (handled_window_type(meta_win.get_window_type())) {
-            	let pid = meta_win.get_pid();
+            	var pid = meta_win.get_pid();
             	if (hasCustomOpacity(pid)) {
             		setOpacity(wa, OpacityHashMap[pid]);
             	} else {
@@ -240,9 +241,9 @@ function init() {
 function enable() {
     indicator = new Indicator();
     Main.panel.addToStatusArea('myoppacitty', indicator);
-    opacityChangedID = settings.connect('changed::opacity', function () { updateOpacity();  });
-    stateChangedID = settings.connect('changed::mystate', function () { updateOpacity();  });
-    on_window_created = global.display.connect('window-created', updateOpacity);
+    var opacityChangedID = settings.connect('changed::opacity', function () { updateOpacity();  });
+    var stateChangedID = settings.connect('changed::mystate', function () { updateOpacity();  });
+    var on_window_created = global.display.connect('window-created', updateOpacity);
     updateOpacity();
 }
 
