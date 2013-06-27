@@ -18,6 +18,9 @@ Transparentwindows
 ### TODO
 * if a window with custom transparency is closed before removing this value, tiny data may stay until the session ends or the extension is disabled or the shell is reloaded. Ooops...(its jus a unique ID, so you probably won't even notice this... unless you open several thousands of windows.) Workaround: remove custom transparency before clowsing a window or clear all custom transparency.
 
+### WARNING:
+* This extension may break anything else that changes opacity.
+* Having many transparent windows may and probably will kill your performance. You may expiriance lag while dragging windows around. It all depends on your hardware tho.
 
 HOW TO INSTALL:
 ---------------
