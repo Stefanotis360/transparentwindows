@@ -25,7 +25,9 @@ Transparentwindows
 HOW TO INSTALL:
 ---------------
 Either:
+
 A. https://extensions.gnome.org/extension/684/transparent-windows/
+
 B. Grab it from here
 
 Please note that only this git repo contains the most recent version of the addon. Due to the review process it may take a while before the updates show up on the extensions.gnome.org page.
