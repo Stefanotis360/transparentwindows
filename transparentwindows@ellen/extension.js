@@ -241,9 +241,9 @@ function init() {
 function enable() {
     indicator = new Indicator();
     Main.panel.addToStatusArea('myoppacitty', indicator);
-    var opacityChangedID = settings.connect('changed::opacity', function () { updateOpacity();  });
-    var stateChangedID = settings.connect('changed::mystate', function () { updateOpacity();  });
-    var on_window_created = global.display.connect('window-created', updateOpacity);
+    opacityChangedID = settings.connect('changed::opacity', function () { updateOpacity();  });
+    stateChangedID = settings.connect('changed::mystate', function () { updateOpacity();  });
+    on_window_created = global.display.connect('window-created', updateOpacity);
     updateOpacity();
 }
 
