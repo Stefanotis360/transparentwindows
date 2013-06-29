@@ -8,7 +8,7 @@ const Lang = imports.lang;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-let settings;
+let settings, indicator, on_window_created, opacityChangedID, stateChangedID;
 var transparent = "Transparent";
 var opaque = "Opaque";
 var c_t = "Tr";
@@ -124,18 +124,18 @@ const Indicator = new Lang.Class({
     },
     
     _onValueChanged: function() {
-        oppa = Math.floor((this._tsValueSlider.value * 205) + 50);
+        var oppa = Math.floor((this._tsValueSlider.value * 205) + 50);
         this._settings.set_int('opacity', oppa);
         this._updateLabel();
     },
     
     _onValueChanged_active: function() {
-        oppa = Math.floor((this._tsValueSlider_active.value * 205) + 50);
+        var oppa = Math.floor((this._tsValueSlider_active.value * 205) + 50);
 		setCustomOpacity(oppa);
     },
 
     _onToggled: function() {
-        mystate = settings.get_int('mystate');
+        var mystate = settings.get_int('mystate');
         if (mystate == 1) {
             mydisconnect();
         }
@@ -146,7 +146,7 @@ const Indicator = new Lang.Class({
     },
 
 });
-
+// finds the PID of the process that created the window. 
 function getActivePid() {
 	var somepid = false;
 	global.get_window_actors().forEach(function(wa) {
@@ -157,7 +157,7 @@ function getActivePid() {
     });
     return somepid;
 }
-
+// change opacity of focused window only and save setting
 function setCustomOpacity(opacity) {
 	global.get_window_actors().forEach(function(wa) {
            var meta_win = wa.get_meta_window();
@@ -167,7 +167,7 @@ function setCustomOpacity(opacity) {
            }
         });
 }
-
+// checks if a given window has custom oppacity applied 
 function hasCustomOpacity(pid_id) {
 	if (pid_id in OpacityHashMap) {
 		return true;
@@ -175,9 +175,7 @@ function hasCustomOpacity(pid_id) {
 		return false;
 	}
 }
-
-let indicator;
-
+// checks if the given window can have oppacity changed
 function handled_window_type(wtype) {
     for (var i = 0; i < handled_window_types.length; i++) {
         let hwtype = handled_window_types[i];
@@ -189,7 +187,7 @@ function handled_window_type(wtype) {
     }
     return false;
 }
-
+// applys opacity value to given window
 function setOpacity(window_actor, target_opacity) {
     window_actor.opacity = target_opacity;
 }
@@ -203,16 +201,18 @@ function toggleState() {
         settings.set_int('mystate', 1);
     }
 }
-
+// called to make all windows opaque
 function mydisconnect() {
     global.get_window_actors().forEach(function(window_actor) {
         window_actor.opacity =  opacity_opaque;
     });
     settings.set_int('mystate', 0);
 }
+// Updates opacity
 function updateOpacity() {
   	var mystate = settings.get_int('mystate');
     if (mystate == 1) {
+    	var win_exist = {};
       	var opacity_transparent = settings.get_int('opacity');
         global.get_window_actors().forEach(function(wa) {
             var meta_win = wa.get_meta_window();
@@ -222,15 +222,24 @@ function updateOpacity() {
             var wksp = meta_win.get_workspace();
             if (handled_window_type(meta_win.get_window_type())) {
             	var pid = meta_win.get_pid();
+            	win_exist[pid] = "i_exist";
             	if (hasCustomOpacity(pid)) {
             		setOpacity(wa, OpacityHashMap[pid]);
             	} else {
             		setOpacity(wa, opacity_transparent);	
             	}
-            }
+            }            
         });
+        for ( var key in OpacityHashMap) {
+        	if (key in win_exist) {
+        		// do nothing since the process exists
+        	} else {
+        		delete OpacityHashMap[key];
+        	}
+        }
     }
 }
+
 
 function init() {
     settings = Convenience.getSettings();
